@@ -1,0 +1,56 @@
+server:
+  # Network configuration
+  network:
+    host: "0.0.0.0"        # Binding address (0.0.0.0 for all interfaces)
+    port: 8080              # Default listening port
+    backlog: 10             # Maximum pending connections queue
+    timeout: 30             # Connection timeout in seconds
+
+  # Performance settings
+  performance:
+    max_connections: 100    # Maximum simultaneous connections
+    buffer_size: 8192       # Read/write buffer size in bytes
+    max_request_size: 4096  # Maximum HTTP request header size
+
+  # HTTP protocol settings
+  http:
+    protocol: "HTTP/1.1"
+    keep_alive: false       # Connection keep-alive support
+    default_charset: "UTF-8"
+    server_header: "PRODA/1.0"  # Server header in responses
+
+  # Logging configuration
+  logging:
+    level: "info"           # debug, info, warning, error
+    file: "logs/server.log" # Log file path
+    max_size: "10MB"        # Max log file size
+    backups: 3              # Number of rotated logs to keep
+
+  # Security settings
+  security:
+    max_uri_length: 1024    # Maximum allowed URI length
+    max_headers: 32         # Maximum number of headers
+    disable_trace: true     # Disable TRACE method
+
+# Application-specific routes
+routes:
+  - path: "/"
+    handler: "root_handler"
+    methods: ["GET"]
+    cache_control: "no-cache"
+
+  - path: "/status"
+    handler: "status_handler"
+    methods: ["GET"]
+    content_type: "application/json"
+
+  - path: "/echo"
+    handler: "echo_handler"
+    methods: ["POST"]
+    max_body_size: "1MB"
+
+# Development settings (overrides production when debug=true)
+development:
+  debug: false
+  verbose_logging: true
+  stack_traces: true

@@ -1,105 +1,92 @@
-PRODA - Educational HTTP Server in C
-PRODA is a minimal yet fully functional HTTP server implementation written in ANSI C. Designed for educational purposes, it's an excellent resource for understanding the fundamental principles of network programming and HTTP protocol at a low level.
+# PRODA - Educational HTTP Server in C
 
-This project emphasizes code clarity and architectural simplicity, offering insights into socket programming, request parsing, and connection handling.
+PRODA is a minimal yet fully functional HTTP server implementation written in **ANSI C**. Designed for educational purposes, it's an excellent resource for understanding the fundamental principles of network programming and HTTP protocol at a low level.
 
-Key Features
-HTTP/1.1 Core: Implements essential HTTP/1.1 functionality, including GET and POST request handling.
+This project emphasizes **code clarity** and **architectural simplicity**, offering insights into socket programming, request parsing, and connection handling.
 
-C99 Standard: Adheres to C99 for broad compatibility.
+---
 
-Single-Threaded Design: Simple architecture to clearly demonstrate the complete request lifecycle.
+## Key Features
 
-Proper HTTP Formatting: Maintains correct status lines, headers, and body separation.
+* **HTTP/1.1 Core:** Implements essential HTTP/1.1 functionality, including GET and POST request handling.
+* **C99 Standard:** Adheres to C99 for broad compatibility.
+* **Single-Threaded Design:** Simple architecture to clearly demonstrate the complete request lifecycle.
+* **Proper HTTP Formatting:** Maintains correct status lines, headers, and body separation.
+* **Configurable:** Uses a YAML-based configuration file (`info.yaml`) for runtime parameters (ports, connection limits, logging, security, routes).
+* **Educational Focus:** Prioritizes clarity over complexity, making it ideal for learning and experimentation.
 
-Configurable: Uses a YAML-based configuration file (info.yaml) for runtime parameters (ports, connection limits, logging, security, routes).
+---
 
-Educational Focus: Prioritizes clarity over complexity, making it ideal for learning and experimentation.
+## Getting Started
 
-Okay, I've revised your README.md file to be more concise, remove some "water," and specifically add clear instructions for setting up, building, and deploying the server locally.
+### Installation, Building, and Local Deployment
 
-PRODA - Educational HTTP Server in C
-PRODA is a minimal yet fully functional HTTP server implementation written in ANSI C. Designed for educational purposes, it's an excellent resource for understanding the fundamental principles of network programming and HTTP protocol at a low level.
-
-This project emphasizes code clarity and architectural simplicity, offering insights into socket programming, request parsing, and connection handling.
-
-Key Features
-HTTP/1.1 Core: Implements essential HTTP/1.1 functionality, including GET and POST request handling.
-
-C99 Standard: Adheres to C99 for broad compatibility.
-
-Single-Threaded Design: Simple architecture to clearly demonstrate the complete request lifecycle.
-
-Proper HTTP Formatting: Maintains correct status lines, headers, and body separation.
-
-Configurable: Uses a YAML-based configuration file (info.yaml) for runtime parameters (ports, connection limits, logging, security, routes).
-
-Educational Focus: Prioritizes clarity over complexity, making it ideal for learning and experimentation.
-
-Getting Started
-Installation, Building, and Local Deployment
 Follow these steps to get PRODA up and running on your local machine:
 
-Clone the Repository:
-First, clone the PRODA repository to your local system:
+1.  **Clone the Repository:**
+    First, clone the PRODA repository to your local system:
 
-Bash
+    ```bash
+    git clone [https://github.com/subhumman/CSERV.git](https://github.com/subhumman/CSERV.git)
+    cd CSERV
+    ```
 
-git clone https://github.com/subhumman/CSERV.git
-cd CSERV
-Build the Server:
-You'll need a standard C development environment (e.g., GCC or Clang on Unix-like systems, MinGW/MSVC on Windows).
+2.  **Build the Server:**
+    You'll need a standard C development environment (e.g., GCC or Clang on Unix-like systems, MinGW/MSVC on Windows).
 
-Linux / macOS:
-Navigate to the project root and run make:
+    * **Linux / macOS:**
+        Navigate to the project root and run `make`:
 
-Bash
+        ```bash
+        make
+        ```
+    * **Windows:**
+        Use the provided alternative makefile. If using MinGW, open your MinGW shell and run:
 
-make
-Windows:
-Use the provided alternative makefile. If using MinGW, open your MinGW shell and run:
+        ```bash
+        mingw32-make -f Makefile.win
+        ```
+        This command will compile the source code and generate a `server` executable (or `server.exe` on Windows) in the project root directory.
 
-Bash
+3.  **Configure the Server (Optional):**
+    The server's behavior is defined in the `info.yaml` file. You can modify this file to change the host, port (default: 8080), logging settings, and define routes.
 
-mingw32-make -f Makefile.win
-This command will compile the source code and generate a server executable (or server.exe on Windows) in the project root directory.
+    *Example `info.yaml` snippets:*
+    ```yaml
+    server:
+      network:
+        host: "0.0.0.0"
+        port: 8080
+    routes:
+      - path: "/"
+        handler: "root_handler"
+        methods: ["GET"]
+    ```
 
-Configure the Server (Optional):
-The server's behavior is defined in the info.yaml file. You can modify this file to change the host, port (default: 8080), logging settings, and define routes.
+4.  **Run the Server:**
+    Once compiled, launch the server from the project root directory:
 
-Example info.yaml snippets:
+    ```bash
+    ./server
+    ```
+    The server will start listening for incoming connections on the configured port (default: 8080).
 
-YAML
+5.  **Test the Server:**
+    Open your web browser and navigate to `http://localhost:8080/` (or the port you configured).
+    You can also use command-line tools like `curl`:
 
-server:
-  network:
-    host: "0.0.0.0"
-    port: 8080
-routes:
-  - path: "/"
-    handler: "root_handler"
-    methods: ["GET"]
-Run the Server:
-Once compiled, launch the server from the project root directory:
+    ```bash
+    curl http://localhost:8080/
+    curl http://localhost:8080/status
+    ```
+    The server will respond according to the defined routes and configurations.
 
-Bash
+---
 
-./server
-The server will start listening for incoming connections on the configured port (default: 8080).
+## Development & Testing
 
-Test the Server:
-Open your web browser and navigate to http://localhost:8080/ (or the port you configured).
-You can also use command-line tools like curl:
-
-Bash
-
-curl http://localhost:8080/
-curl http://localhost:8080/status
-
-The server will respond according to the defined routes and configurations.
-
-Development & Testing
 The project includes basic testing facilities. The straightforward architecture simplifies adding new features or experimenting with different request handling approaches. Debugging is supported via conditional compilation flags, providing verbose output for tracing request processing.
 
-Educational Value
+## Educational Value
+
 PRODA's uncompromising focus on clarity over complexity makes it exceptionally valuable for learners. It clearly exposes the underlying mechanics of HTTP server operation, serving as an excellent foundation for extending protocol support, adding features, or modifying the request handling pipeline.
