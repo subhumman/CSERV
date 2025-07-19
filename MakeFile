@@ -29,7 +29,7 @@ SOURCES = $(filter-out $(SRC)/app.log, $(wildcard $(SRC)/*.c))
 HEADERS = $(wildcard $(HEADERS_DIR)/*.h)
 OBJ = $(patsubst $(SRC)/%.c, $(BUILD)/%.o, $(SOURCES))
 
-CFLAGS = -Wall -Wextra -std=c99 -I$(HEADERS_DIR)
+CFLAGS = -Wall -Wextra -std=c11 -I$(HEADERS_DIR)
 LDFLAGS = 
 
 .PHONY: all clean build-dir lint test docker-build docker-run ci deploy monitor
