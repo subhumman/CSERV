@@ -25,7 +25,7 @@ extern HTTP* new_http(char* address){
     http->host = (char*)malloc(sizeof(char) * strlen(address) + 1);
     strcpy(http->host, address);
     http->tab = new_hashtab(http->cap, STRING_TYPE, DECIMAL_TYPE);
-    http->funcs = (void(**funcs)(int, HTTPrequests*))malloc(http->cap * sizeof(void(**funcs)(int, HTTPrequests*)));
+    http->funcs = (void(*)(int, HTTPrequests*))malloc(http->cap * sizeof(void(*)(int, HTTPrequests*)));
     return http;
 }
 
@@ -62,7 +62,7 @@ static void null_request(HTTPrequests *request) {
 	request->ind = 0;
 }
 
-static void _parse_request(HTTPrequests *request, char *buffer, size_t size) {
+static void parse_request(HTTPrequests *request, char *buffer, size_t size) {
 	// printf("%s\n", buffer);
 	for (size_t i = 0; i < size; ++i) {
 		switch(request->state) {
@@ -96,13 +96,19 @@ static void _parse_request(HTTPrequests *request, char *buffer, size_t size) {
 	}
 }
 
-static int8_t _switch_http(HTTP *http, int conn, HTTPrequests *request) {
+static void page404_html(int connect){
+	char* header = "HTML/1.1 404 Not Found\n\nnot found";
+	size_t headsz = strlen(header);
+	send_net(connect, header, headsz);
+}
+
+static int8_t switch_http(HTTP *http, int conn, HTTPrequests *request) {
 	if (!in_hashtab(http->tab, string(request->path))) {
 		char buffer[PATH_SIZE];
 		memcpy(buffer, request->path, PATH_SIZE);
 		int32_t index = strlen(request->path);
 		if (index == 0) {
-			_page404_http(conn);
+			page404_http(conn);
 			return 1;
 		}
 		index -= 1;
@@ -111,7 +117,7 @@ static int8_t _switch_http(HTTP *http, int conn, HTTPrequests *request) {
 			buffer[index] = '\0';
 		}
 		if(!in_hashtab(http->tab, string(buffer))) {
-			_page404_http(conn);
+			page404_http(conn);
 			return 2;
 		}
 		index = get_hashtab(http->tab, string(buffer)).decimal;
@@ -156,7 +162,7 @@ extern void htmlparse_http(int connect, char* name){
     char buffer[BUFSIZ] = "HTTP/1.1 200 OK\nContent-type: text/html\n\n";
     size_t readsz = strlen(buffer);
     send_net(connect, buffer, readsz);
-    FILE* file = fopen(filename, "r");
+    FILE* file = fopen("outfile", "r");
     if(file == NULL)
         return;
     while((readsz = fread(buffer, sizeof(char), BUFSIZ, file)) != 0)
