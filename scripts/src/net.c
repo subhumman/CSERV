@@ -46,6 +46,7 @@ extern int listen_net(char* address){
 extern int accept_net(int listener){
     return accept(listener, NULL, NULL); // NULL потому что нет дела до того, кто подкл
 }
+
 extern int connect_net(char* address){
     #ifdef __WIN32
     WSADATA wsa;
@@ -71,6 +72,7 @@ extern int connect_net(char* address){
     }
     return conn;
 }
+
 extern int close_net(int conn){
 #ifdef __Linux__
     close(conn);
@@ -78,9 +80,11 @@ extern int close_net(int conn){
     closesocket(conn)
 #endif
 }
+
 extern int send_net(int conn, char* buf, size_t size){
     return send(conn, buf, (int)size, 0);
 }
+
 extern int recv_net(int connect, char* buf, size_t size){
     return recv(conn, buf, (int)size, 0);
 }

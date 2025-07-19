@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#include "hashtab.h"
+#include "hash.h"
 #include "tree.h"
 #include "type.h"
 
