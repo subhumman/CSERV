@@ -8,7 +8,11 @@
 #endif
 
 #if defined(__linux__) || defined(__WIN32)
+#include <stdlib.h>
+#include <stdint.h>
+#include <stddef.h>
 #include "net.h"
+#include "hash.h"
 
 static int8_t pars_address(char* address, char* ipv4, char* port);
 
@@ -75,9 +79,9 @@ extern int connect_net(char* address){
 
 extern int close_net(int conn){
 #ifdef __Linux__
-    close(conn);
+    return close(conn);
 #elif __WIN32
-    closesocket(conn)
+    return closesocket(conn)
 #endif
 }
 
@@ -101,7 +105,7 @@ static int8_t pars_address(char* address, char* ipv4, char* port){
         ipv4[i] = address[i];
     }
     ipv4[i] = '\0';
-    for(; address[i] != '\0'; ++i, ++j){
+    for(i += 1; address[i] != '\0'; ++i, ++j){ // i+=1 для исключения ":" в парсере
         if(i >= 5){
             return 3;
         }
