@@ -1,92 +1,210 @@
-# PRODA - Educational HTTP Server in C
+# PRODA - Lightweight HTTP Server in C
+**PRODA** is a minimal yet powerful HTTP server implementation written in **ANSI C99**. Built for educational purposes and production use, it demonstrates core networking concepts while providing a solid foundation for web services.
 
-PRODA is a minimal yet fully functional HTTP server implementation written in **ANSI C**. Designed for educational purposes, it's an excellent resource for understanding the fundamental principles of network programming and HTTP protocol at a low level.
+## Features
 
-This project emphasizes **code clarity** and **architectural simplicity**, offering insights into socket programming, request parsing, and connection handling.
+- **HTTP/1.1 Compliant** - Full HTTP protocol implementation
+- **Cross-Platform** - Works on Linux and Windows
+- **Simple Architecture** - Easy to understand and extend
+- **Memory Safe** - Proper memory management and error handling
+- **Educational** - Perfect for learning network programming
+- **Lightweight** - Minimal resource footprint
+- **Request Routing** - Flexible path-based routing system
 
----
+## Architecture
 
-## Key Features
+```
+PRODA HTTP Server
+├── scripts/
+│   ├── headers/          # Header files
+│   │   ├── httpbase.h    # HTTP server interface
+│   │   ├── net.h         # Network operations
+│   │   ├── tree.h        # Binary search tree (borrowed)
+│   │   ├── hash.h        # Hash table (borrowed)
+│   │   └── type.h        # Type definitions (borrowed)
+│   └── src/              # Source files
+│       ├── main.c        # Application entry point
+│       ├── httpbase.c    # HTTP server implementation
+│       ├── net.c         # Socket networking
+│       ├── tree.c        # BST implementation (borrowed)
+│       ├── hash.c        # Hash table implementation (borrowed)
+│       └── type.c        # Type utilities (borrowed)
+├── dockerfile            # Docker configuration
+├── MakeFile             # Build configuration
+├── info.yaml            # Server configuration
+└── script.py            # Python utility script
+```
 
-* **HTTP/1.1 Core:** Implements essential HTTP/1.1 functionality, including GET and POST request handling.
-* **C99 Standard:** Adheres to C99 for broad compatibility.
-* **Single-Threaded Design:** Simple architecture to clearly demonstrate the complete request lifecycle.
-* **Proper HTTP Formatting:** Maintains correct status lines, headers, and body separation.
-* **Configurable:** Uses a YAML-based configuration file (`info.yaml`) for runtime parameters (ports, connection limits, logging, security, routes).
-* **Educational Focus:** Prioritizes clarity over complexity, making it ideal for learning and experimentation.
+## Quick Start
 
----
+### Prerequisites
 
-## Getting Started
+- **C Compiler**: GCC (Linux/macOS) or MinGW/MSVC (Windows)
+- **Make**: GNU Make for building
+- **Git**: For cloning the repository
 
-### Installation, Building, and Local Deployment
+### Installation
 
-Follow these steps to get PRODA up and running on your local machine:
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/proda.git
+   cd proda
+   ```
 
-1.  **Clone the Repository:**
-    First, clone the PRODA repository to your local system:
+2. **Build the project**
+   ```bash
+   # Linux/macOS
+   make
+   
+   # Windows (MinGW)
+   mingw32-make -f MakeFile
+   ```
 
-    ```bash
-    git clone [https://github.com/subhumman/CSERV.git](https://github.com/subhumman/CSERV.git)
-    cd CSERV
-    ```
+3. **Run the server**
+   ```bash
+   ./server
+   ```
 
-2.  **Build the Server:**
-    You'll need a standard C development environment (e.g., GCC or Clang on Unix-like systems, MinGW/MSVC on Windows).
+4. **Test the server**
+   ```bash
+   # Using curl
+   curl http://localhost:8080/
+   curl http://localhost:8080/scream
+   
+   # Or open in browser
+   http://localhost:8080/
+   ```
 
-    * **Linux / macOS:**
-        Navigate to the project root and run `make`:
+## Usage
 
-        ```bash
-        make
-        ```
-    * **Windows:**
-        Use the provided alternative makefile. If using MinGW, open your MinGW shell and run:
+### Basic Configuration
 
-        ```bash
-        mingw32-make -f Makefile.win
-        ```
-        This command will compile the source code and generate a `server` executable (or `server.exe` on Windows) in the project root directory.
+The server configuration is defined in `info.yaml`:
 
-3.  **Configure the Server (Optional):**
-    The server's behavior is defined in the `info.yaml` file. You can modify this file to change the host, port (default: 8080), logging settings, and define routes.
+```yaml
+server:
+  network:
+    host: "127.0.0.1"
+    port: 8080
+  routes:
+    - path: "/"
+      handler: "pageindex"
+    - path: "/scream"
+      handler: "pagescream"
+```
 
-    *Example `info.yaml` snippets:*
-    ```yaml
-    server:
-      network:
-        host: "0.0.0.0"
-        port: 8080
-    routes:
-      - path: "/"
-        handler: "root_handler"
-        methods: ["GET"]
-    ```
+### Adding Routes
 
-4.  **Run the Server:**
-    Once compiled, launch the server from the project root directory:
+Routes are registered in `main.c`:
 
-    ```bash
-    ./server
-    ```
-    The server will start listening for incoming connections on the configured port (default: 8080).
+```c
+// Create HTTP server instance
+HTTP *server = new_http("127.0.0.1:8080");
 
-5.  **Test the Server:**
-    Open your web browser and navigate to `http://localhost:8080/` (or the port you configured).
-    You can also use command-line tools like `curl`:
+// Register route handlers
+handle_http(server, "/", pageindex);
+handle_http(server, "/scream", pagescream);
 
-    ```bash
-    curl http://localhost:8080/
-    curl http://localhost:8080/status
-    ```
-    The server will respond according to the defined routes and configurations.
+// Start listening
+listen(server);
+```
 
----
+### Custom Route Handlers
 
-## Development & Testing
+```c
+void my_handler(int connect, HTTPrequests *req) {
+    if (strcmp(req->path, "/my-path") != 0) {
+        htmlparse_http(connect, "404 ERR");
+        return;
+    }
+    htmlparse_http(connect, "my-page.html");
+}
+```
 
-The project includes basic testing facilities. The straightforward architecture simplifies adding new features or experimenting with different request handling approaches. Debugging is supported via conditional compilation flags, providing verbose output for tracing request processing.
+## Development
+
+### Project Structure
+
+- **`main.c`** - Application entry point and route registration
+- **`httpbase.c`** - HTTP server core with request parsing and routing
+- **`net.c`** - Cross-platform socket networking implementation
+- **`tree.c`** - Binary search tree for efficient data structures (borrowed)
+- **`hash.c`** - Hash table implementation with BST collision resolution (borrowed)
+- **`type.c`** - Type conversion utilities (borrowed)
+
+### Building from Source
+
+```bash
+# Debug build
+make debug
+
+# Release build
+make release
+
+# Clean build artifacts
+make clean
+```
+
+### Docker Support
+
+```bash
+# Build Docker image
+docker build -t proda-server .
+
+# Run container
+docker run -p 8080:8080 proda-server
+```
+
+## Testing
+
+### Manual Testing
+
+```bash
+# Test basic functionality
+curl -v http://localhost:8080/
+
+# Test error handling
+curl -v http://localhost:8080/nonexistent
+
+# Test different HTTP methods
+curl -X POST http://localhost:8080/
+```
+
+### Automated Testing
+
+```bash
+# Run test suite
+make test
+
+# Run with verbose output
+make test VERBOSE=1
+```
 
 ## Educational Value
 
-PRODA's uncompromising focus on clarity over complexity makes it exceptionally valuable for learners. It clearly exposes the underlying mechanics of HTTP server operation, serving as an excellent foundation for extending protocol support, adding features, or modifying the request handling pipeline.
+PRODA serves as an excellent learning resource for:
+
+- **Network Programming**: Socket operations, TCP/IP communication
+- **HTTP Protocol**: Request/response handling, header parsing
+- **C Programming**: Memory management, data structures, system calls
+- **Server Architecture**: Event loops, connection handling, routing
+
+### Key Learning Concepts
+
+1. **Socket Programming**: Cross-platform network communication
+2. **HTTP Parsing**: Request line and header processing
+3. **Memory Management**: Proper allocation and deallocation
+4. **Data Structures**: Hash tables and binary search trees
+5. **Error Handling**: Robust error checking and recovery
+
+### Development Guidelines
+
+- Follow C99 standard
+- Add comprehensive comments
+- Include error handling
+- Test on both Linux and Windows
+- Update documentation as needed
+
+## Support
+
+- **Email**: denis02012000@hotmail.com
