@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y clang make
+
+      - name: Build
+        run: make all
+
+      - name: Run unit tests
+        run: make test
+
+      - name: Build Docker image
+        run: docker build -t proda-server -f dockerfile .
+
+      # Можно добавить деплой на сервер, если нужно:
+      # - name: Deploy
+      #   run: ssh user@yourserver 'cd /path && git pull && make all && ...'

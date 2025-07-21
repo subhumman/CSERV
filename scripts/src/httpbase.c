@@ -195,7 +195,7 @@ extern void htmlparse_http(int connect, char* name){
     size_t readsz = strlen(buffer);
     send_net(connect, buffer, readsz);
     // Open and send HTML file content
-    FILE* file = fopen("outfile", "r");
+    FILE* file = fopen(name, "r");
     if(file == NULL)
         return;
     while((readsz = fread(buffer, sizeof(char), BUFSIZ, file)) != 0)
