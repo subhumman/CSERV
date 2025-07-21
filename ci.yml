@@ -24,7 +24,3 @@ jobs:
 
       - name: Build Docker image
         run: docker build -t proda-server -f dockerfile .
-
-      # Можно добавить деплой на сервер, если нужно:
-      # - name: Deploy
-      #   run: ssh user@yourserver 'cd /path && git pull && make all && ...'
