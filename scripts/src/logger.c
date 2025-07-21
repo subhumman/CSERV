@@ -3,11 +3,14 @@
 #include <stdarg.h>
 #include <time.h>
 
+// Static variables for log file and current log level
 static FILE *log_file = NULL;
 static log_level_t current_level = LOG_INFO;
 
+// String representations of log levels
 static const char *level_str[] = { "DEBUG", "INFO", "WARN", "ERROR" };
 
+// Initialize logger: open file and set minimum log level
 void log_init(const char *filename, log_level_t min_level) {
     if (log_file && log_file != stdout) {
         fclose(log_file);
@@ -17,6 +20,7 @@ void log_init(const char *filename, log_level_t min_level) {
     current_level = min_level;
 }
 
+// Write a log message if level is sufficient
 void log_write(log_level_t level, const char *fmt, ...) {
     if (level < current_level) return;
     time_t now = time(NULL);
@@ -33,6 +37,7 @@ void log_write(log_level_t level, const char *fmt, ...) {
     fflush(log_file);
 }
 
+// Close the log file if needed
 void log_close(void) {
     if (log_file && log_file != stdout) fclose(log_file);
     log_file = NULL;

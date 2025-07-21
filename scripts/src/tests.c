@@ -4,7 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-// Тест парсинга HTTP-запроса
+// Test HTTP request parsing logic
 int test_parse_request() {
     HTTPrequests req = {0};
     char raw[] = "GET /scream HTTP/1.1\n";
@@ -24,10 +24,11 @@ int test_parse_request() {
     return 0;
 }
 
-// Тест маршрутизации
+// Dummy handler for routing test
 static int called = 0;
 void fake_handler(int conn, HTTPrequests *req) { (void)conn; (void)req; called = 1; }
 
+// Test HTTP routing logic
 int test_routing() {
     HTTP *server = new_http("127.0.0.1:8080");
     handle_http(server, "/test", fake_handler);
@@ -47,6 +48,7 @@ int test_routing() {
     return 0;
 }
 
+// Run all tests and print summary
 int run_all_tests(void) {
     int fails = 0;
     printf("Running test_parse_request...\n");

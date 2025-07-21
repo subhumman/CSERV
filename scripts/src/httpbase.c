@@ -80,7 +80,6 @@ static void null_request(HTTPrequests *request) {
 
 // Parse HTTP request line (method, path, protocol)
 static void parse_request(HTTPrequests *request, char *buffer, size_t size) {
-    // printf("%s\n", buffer);
     for (size_t i = 0; i < size; ++i) {
         switch(request->state) {
             case 0: // Parsing HTTP method
@@ -128,17 +127,16 @@ static int8_t switch_http(HTTP *http, int conn, HTTPrequests *request) {
         memcpy(buffer, request->path, PATH_SIZE);
         int32_t index = strlen(request->path);
         if (index == 0) {
-            page404_http(conn);
+            page404_html(conn);
             return 1;
         }
         index -= 1;
-//      buffer[index] = '\0';
         // Try to find parent directory handler
         for (; index > 0 && buffer[index] != '/'; --index) {
             buffer[index] = '\0';
         }
         if(!in_hashtab(http->tab, string(buffer))) {
-            page404_http(conn);
+            page404_html(conn);
             return 2;
         }
         // Call parent directory handler
@@ -152,14 +150,14 @@ static int8_t switch_http(HTTP *http, int conn, HTTPrequests *request) {
     return 0;
 }
 
-// Start HTTP server and listen for connections
+// Start HTTP server and listen for connections (infinite loop, no shutdown)
 extern int8_t listen(HTTP* http){
     // Create listening socket
     int listener = listen_net(http->host);
     if (listener < 0) {
         return 1;
     }
-    // Main server loop
+    // Main server loop (runs forever)
     while(1) {
         // Accept new connection
         int conn = accept_net(listener);

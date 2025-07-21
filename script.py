@@ -7,11 +7,13 @@ DOCKERFILE = "dockerfile"
 PORT = "8080"
 
 def run(cmd, check=True, shell=False):
+    # Run a shell command and print it
     print(f"Running: {' '.join(cmd) if isinstance(cmd, list) else cmd}")
     result = subprocess.run(cmd, check=check, shell=shell)
     return result
 
 def deploy():
+    # Build Docker image and restart container
     print("Building Docker image...")
     run(["docker", "build", "-t", DOCKER_IMAGE, "-f", DOCKERFILE, "."])
     print("Stopping old container (if exists)...")
@@ -26,15 +28,18 @@ def deploy():
     print("Deployment complete.")
 
 def monitor():
+    # Show logs from the running container
     print("Tailing logs from container...")
     run(["docker", "logs", "-f", DOCKER_CONTAINER])
 
 def restart():
+    # Restart the running container
     print("Restarting container...")
     run(f"docker restart {DOCKER_CONTAINER}", shell=True)
     print("Container restarted.")
 
 if __name__ == "__main__":
+    # Command-line interface for deploy/monitor/restart
     if "--deploy" in sys.argv:
         deploy()
     elif "--monitor" in sys.argv:

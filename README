@@ -1,212 +1,75 @@
 
-PRODA - Lightweight HTTP Server in C
-
-PRODA is a minimal yet powerful HTTP server implementation written in ANSI C99. Built for educational purposes and production use, it demonstrates core networking concepts while providing a solid foundation for web services.
-
-Features
-
-HTTP/1.1 Compliant - Full HTTP protocol implementation
-
-Cross-Platform - Works on Linux and Windows
-
-Simple Architecture - Easy to understand and extend
-
-Memory Safe - Proper memory management and error handling
-
-Educational - Perfect for learning network programming
-
-Lightweight - Minimal resource footprint
-
-Request Routing - Flexible path-based routing system
-
-Architecture
-
-├── scripts/
-│   ├── headers/          # Header files
-│   │   ├── httpbase.h    # HTTP server interface
-│   │   ├── net.h         # Network operations
-│   │   ├── tree.h        # Binary search tree (borrowed)
-│   │   ├── hash.h        # Hash table (borrowed)
-│   │   └── type.h        # Type definitions (borrowed)
-│   └── src/              # Source files
-│       ├── main.c        # Application entry point
-│       ├── httpbase.c    # HTTP server implementation
-│       ├── net.c         # Socket networking
-│       ├── tree.c        # BST implementation (borrowed)
-│       ├── hash.c        # Hash table implementation (borrowed)
-│       └── type.c        # Type utilities (borrowed)
-├── dockerfile            # Docker configuration
-├── MakeFile             # Build configuration
-├── info.yaml            # Server configuration
-└── script.py            # Python utility script
-
-
-Quick Start
-
-Prerequisites
-
-C Compiler: GCC (Linux/macOS) or MinGW/MSVC (Windows)
-
-Make: GNU Make for building
-
-Git: For cloning the repository
-
-Installation
-
-Clone the repository
-git clone https://github.com/yourusername/proda.git
-cd proda
-
-Build the project
-Linux/macOS
-make
-
-Windows (MinGW)
-mingw32-make -f MakeFile
-
-Run the server
-./server
-
-Test the server
-Using curl
-curl http://localhost:8080/
-curl http://localhost:8080/scream
-
-Or open in browser
-http://localhost:8080/
-
-Usage
-
-Basic Configuration
-
-The server configuration is defined in info.yaml:
-
-server:
-network:
-host: "127.0.0.1"
-port: 8080
-routes:
-- path: "/"
-handler: "pageindex"
-- path: "/scream"
-handler: "pagescream"
-
-Adding Routes
-
-Routes are registered in main.c:
-
-// Create HTTP server instance
-HTTP *server = new_http("127.0.0.1:8080");
-
-// Register route handlers
-handle_http(server, "/", pageindex);
-handle_http(server, "/scream", pagescream);
-
-// Start listening
-listen(server);
-
-Custom Route Handlers
-
-void my_handler(int connect, HTTPrequests *req) {
-if (strcmp(req->path, "/my-path") != 0) {
-htmlparse_http(connect, "404 ERR");
-return;
-}
-htmlparse_http(connect, "my-page.html");
-}
-
-Development
-
-Project Structure
-
-main.c - Application entry point and route registration
-
-httpbase.c - HTTP server core with request parsing and routing
-
-net.c - Cross-platform socket networking implementation
-
-tree.c - Binary search tree for efficient data structures (borrowed)
-
-hash.c - Hash table implementation with BST collision resolution (borrowed)
-
-type.c - Type conversion utilities (borrowed)
-
-Building from Source
-
-Debug build
-make debug
-
-Release build
-make release
-
-Clean build artifacts
-make clean
-
-Docker Support
-
-Build Docker image
-docker build -t proda-server .
-
-Run container
-docker run -p 8080:8080 proda-server
-
-Testing
-
-Manual Testing
-
-Test basic functionality
-curl -v http://localhost:8080/
-
-Test error handling
-curl -v http://localhost:8080/nonexistent
-
-Test different HTTP methods
-curl -X POST http://localhost:8080/
-
-Automated Testing
-
-Run test suite
-make test
-
-Run with verbose output
-make test VERBOSE=1
-
-Educational Value
-
-PRODA serves as an excellent learning resource for:
-
-Network Programming: Socket operations, TCP/IP communication
-
-HTTP Protocol: Request/response handling, header parsing
-
-C Programming: Memory management, data structures, system calls
-
-Server Architecture: Event loops, connection handling, routing
-
-Key Learning Concepts
-
-Socket Programming: Cross-platform network communication
-
-HTTP Parsing: Request line and header processing
-
-Memory Management: Proper allocation and deallocation
-
-Data Structures: Hash tables and binary search trees
-
-Error Handling: Robust error checking and recovery
-
-Development Guidelines
-
-Follow C99 standard
-
-Add comprehensive comments
-
-Include error handling
-
-Test on both Linux and Windows
-
-Update documentation as needed
-
-Support
-
-Email: denis02012000@hotmail.com
+PRODA — Легковесный HTTP-сервер на C
+
+Описание
+--------
+PRODA — это минималистичная реализация HTTP-сервера на языке C, предназначенная для демонстрации ключевых навыков DevOps-инженера начального уровня:
+- Сетевое программирование и работа с сокетами
+- Логирование событий
+- Покрытие кода юнит-тестами
+- Работа с Docker и контейнеризацией
+- Автоматизация сборки и тестирования через CI/CD
+- Использование конфигурационных файлов
+
+Структура проекта
+-----------------
+- scripts/headers/ — заголовочные файлы
+- scripts/src/     — исходный код на C
+- dockerfile       — описание Docker-образа
+- MakeFile         — сборка и автоматизация
+- script.py        — утилиты для деплоя и мониторинга
+- info.yaml        — пример конфигурации сервера
+
+Основные возможности
+--------------------
+- Обработка HTTP-запросов и маршрутизация
+- Кроссплатформенная работа (Linux, Windows)
+- Простая архитектура для расширения
+- Логирование с уровнями (debug, info, warn, error)
+- Юнит-тесты для ключевых компонентов
+- Сборка и запуск в Docker-контейнере
+- Пример CI/CD для автоматизации
+
+Быстрый старт
+-------------
+1. Клонируйте репозиторий:
+   git clone <URL>
+   cd proda
+
+2. Соберите проект:
+   make
+
+3. Запустите сервер:
+   ./bin/proda
+
+4. Проверьте работу:
+   curl http://localhost:8080/
+   curl http://localhost:8080/scream
+
+5. Запустите тесты:
+   make test
+
+6. Соберите и запустите в Docker:
+   docker build -t proda-server .
+   docker run -p 8080:8080 proda-server
+
+7. Деплой и мониторинг:
+   python script.py --deploy
+   python script.py --monitor
+
+CI/CD
+-----
+В проекте приведён пример workflow для GitHub Actions. Автоматически выполняется сборка, тестирование и сборка Docker-образа при каждом пуше.
+
+Конфигурация
+------------
+Параметры сервера и маршрутов задаются в файле info.yaml. Пример приведён в репозитории.
+
+Назначение
+----------
+Этот проект предназначен для демонстрации навыков DevOps junior:
+- Понимание сетевого взаимодействия и протокола HTTP # подразумевается естественно также и знание остальных базовых понятий по типу dns и https
+- Умение писать и тестировать код на C
+- Настройка логирования и тестирования
+- Работа с Docker и автоматизацией CI/CD
+- Использование конфигурационных файлов
