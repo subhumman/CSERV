@@ -1,9 +1,5 @@
 Proda: Минималистичный HTTP/1.1 сервер на C
 
-https://github.com/your-username/proda/actions/workflows/ci-cd.yml/badge.svg
-https://img.shields.io/badge/docker-available-blue.svg
-https://img.shields.io/badge/License-MIT-yellow.svg
-
 Минималистичная, но полнофункциональная реализация HTTP/1.1 сервера на языке C, демонстрирующая ключевые навыки современного разработчика и DevOps-инженера.
 
 ## Особенности
